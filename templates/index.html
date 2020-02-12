@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="description" content="">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <title>nCoV-Map</title>
+
+    <!--web fonts-->
+    <link href="http://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700,800" rel="stylesheet">
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800" rel="stylesheet">
+
+    <!--bootstrap styles-->
+    <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!--icon font-->
+    <link href="/static/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+
+    <!--jquery ui-->
+    <link href="/static/vendor/jquery-ui/jquery-ui.min.css" rel="stylesheet">
+
+    <!--custom styles-->
+    <link href="/static/css/main.css" rel="stylesheet">
+    
+    
+<style>
+    .title{
+        border-left: 8px solid #007aff;
+        padding: 10px 20px 9px 10px;
+        font-size: larger;
+    }
+</style>    
+</head>
+
+
+<body class="fixed-nav top-nav">
+
+    <!--header-->
+
+
+    <nav class="navbar navbar-expand-lg fixed-top bg-dark" id="mainNav">
+        <div class="box-container">
+            <div class="text-center">
+                <h2 style="color: white;">2019-2020 nCoV 新型冠状病毒疫情实时动态图</h2>
+            </div>
+
+        </div>
+
+    </nav>
+
+    <!--/header-->
+
+
+    <div id="myNav" style="margin-top:0px;padding-left:0px;padding-right:0px;padding-bottom:0px;!important;">
+        <btn-group style="padding-left:0px;padding-right:0px;!important;" class="btn-group d-flex">
+            <a href="#" class="btn btn-outline-primary">
+                <i class="fas fa-chart-line">&nbsp; 疫情可视化</i>
+            </a>
+
+            <a href="https://mp.weixin.qq.com/s/L4-_iL2MPHYtQMA0cER7jg" class="btn btn-outline-secondary">
+                <i class="fas fa-print">&nbsp; 疫情报告</i>
+            </a>
+        </btn-group>
+    </div>
+
+<div class="row">
+
+    <div class="col-md-2">
+            <p class="title">实时播报</p>
+            <div class="card-body">
+
+                <ul class="list-unstyled base-timeline" id="online" style="font-size: medium;"></ul>
+
+                <ul class="list-unstyled base-timeline" id="newslist"></ul>
+            </div>
+        </div>
+<div class="col-md-10">
+    <div class="box">
+
+        <div class="row">
+
+
+        <div class="col-md-5">
+            <p class="title">全球疫情(2019-nCov)</p>
+            <div id="ncov-maps" class="chart-container" style="width: auto;height:480px"></div>
+
+        </div>
+        <div class="col-md-7">
+            <p class="title">中国疫情地图(2019-nCov)</p>
+            <div id="ncov-map" class="chart-container" style="width:auto; height:480px;"></div>
+
+        </div>
+    </div>
+
+
+<div class="row">
+
+        <div class="col-md-6">
+            <p class="title">国内疫情数据</p>
+            <div id="ncov-line" class="chart-container" style="width:auto; height:480px;"></div>
+        </div>
+        <div class="col-md-6">
+            <p class="title">治愈VS死亡</p>
+            <div id="ncov-heal" class="chart-container" style="width:auto; height:480px;"></div>
+
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+ <div class="row">
+
+        <div class="col-md-6">
+            <p class="title">患者行政区域排行</p>
+
+            <div id="ncov-worldbar" class="chart-container" style="width:auto; height:480px;"></div>
+
+        </div>
+
+
+        <div class="col-md-6">
+            <p class="title">患者总数城市排行Top20</p>
+
+            <div id="ncov-worldline" class="chart-container" style="width:auto; height:480px;"></div>
+
+        </div>
+
+
+    </div>
+        <div class="row">
+
+        <div class="col-md-6">
+            <p class="title">病患年龄分布</p>
+            <div id="ncov-gender" class="chart-container" style="width:auto; height:480px;"></div>
+        </div>
+        <div class="col-md-6">
+            <p class="title">各年龄段感染情况</p>
+            <div id="ncov-distribute" class="chart-container" style="width:auto; height:480px;"></div>
+
+        </div>
+
+
+
+
+
+    </div>
+
+
+
+
+    <!--basic scripts-->
+    <script src="/static/vendor/jquery/jquery.min.js"></script>
+    <script src="/static/vendor/jquery-ui/jquery-ui.min.js"></script>
+    <script src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!--[if lt IE 9]>
+    <script src="/static/vendor/modernizr.js"></script>
+    <![endif]-->
+
+    <!-- echarts -->
+
+    <script type="text/javascript" src="/static/js/echarts.min.js"></script>
+    <script type="text/javascript" src="https://assets.pyecharts.org/assets/maps/china.js"></script>
+    <script type="text/javascript" src="/static/js/maps/world.js"></script>
+
+    <script type="text/javascript" src="/static/js/update.js"></script>
+    <script type="text/javascript" src="/static/js/province.js"></script>
+<script>
+var myChart = echarts.init(document.getElementById('ncov-gender'));
+option = {
+    title: {
+        text: '患者年龄分布',
+        subtext: '部分数据有所缺失'
+    },
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+            type: 'shadow'
+        }
+    },
+    legend: {
+        data: ['男性', '女性']
+    },
+
+    yAxis: {
+        type: 'value',
+        boundaryGap: [0, 0.01]
+    },
+    xAxis: {
+        type: 'category',
+        data: ['0-10岁', '10-20岁', '20-30岁', '30-40岁', '40-50岁', '50-60岁','60-70岁','70岁以上'],
+         axisLabel: {
+
+             interval: 0,
+
+     },
+    },
+    series: [
+        {
+            name: '男性',
+            type: 'bar',
+            data: [1.87, 5.22, 14.55, 24.99, 25.37 ,12.31,8.96,6.73],
+        },
+        {
+            name: '女性',
+            type: 'bar',
+            data: [3.18, 4.09, 11.36, 20.91, 21.36,16.82,15.91,6.37],
+        }
+    ]
+};
+myChart.setOption(option)
+
+var myChart1 = echarts.init(document.getElementById('ncov-distribute'));
+option = {
+    title: {
+        text: '各年龄段感染概率'
+    },
+    tooltip: {
+        trigger: 'axis'
+    },
+    legend: {
+        data: ['男性', '女性', '男性_修正','女性_修正' ]
+    },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },
+    toolbox: {
+        feature: {
+            saveAsImage: {}
+        }
+    },
+    xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: ['0-10岁', '10-20岁', '20-30岁', '30-40岁', '40-50岁', '50-60岁','60-70岁','70岁以上']
+     },
+    yAxis: {
+        type: 'value'
+    },
+    series: [
+        {
+            name: '男性',
+            type: 'line',
+            stack: '总量',
+            data: [15.56,45.65,107.25,155.42,173.25,80.40,88.91,108.52],
+           // [1.87, 5.22, 14.55, 24.99, 25.37 ,12.31,8.96,6.73],
+           //[6.2, 5.9,     7.0,   8.3,  7.8,   7.9,  5.2,  3.2]
+        //[15.56,45.65,107.25,155.42,173.25,80.40,88.91,108.52]
+        },
+        {
+            name: '女性',
+            type: 'line',
+            stack: '总量',
+            data:[29.04   ,38.81,    88.68,129.74, 139.70,105.72,145.29,108.45]
+            //[3.18, 4.09, 11.36, 20.91, 21.36,16.82,15.91,6.37],
+            //[5.3,      5.1,    6.2,   7.8 ,7.4,  7.7,   5.3,3.6  ]
+        //[29.04   ,38.81,    88.68,129.74, 139.70,105.72,145.29,108.45]
+
+
+        },
+
+
+    ]
+};
+myChart1.setOption(option)
+</script>
+
+
+
+
+    <!-- <script type="text/javascript" src="/static/js/wordcloud.js"></script> -->
+</body>
+
+</html>
